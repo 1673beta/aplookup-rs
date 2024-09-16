@@ -6,7 +6,7 @@ on:
 
 jobs: 
     release:
-        name: Release - ${{ matrix.platform.release_for }}
+        name: Build - ${{ matrix.platform.release_for }}
         strategy:
             matrix:
                 platform:
@@ -23,14 +23,7 @@ jobs:
                       bin: aplookup
                       name: aplookup-Linux-x86_64.tar.gz
                       command: build
-                    
-                    - release_for: Linux-Aarch64
-                      os: ubuntu-20.04
-                      target: aarch64-unknown-linux-gnu
-                      bin: aplookup
-                      name: aplookup-Linux-Aarch64.tar.gz
-                      command: build
-                    
+                                        
                     - release_for: macOS-x86_64
                       os: macOS-latest
                       target: x86_64-apple-darwin
@@ -55,4 +48,15 @@ jobs:
                 command: ${{ matrix.platform.commmand }}
                 target: ${{ matrix.platform.target }}
                 args: "--locked --release"
+                toolchain: stable
                 strip: true
+            - name: Publish
+              uses: actions/upload-release-asset@v1
+              env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                upload_url: ${{ github.event.release.upload_url }}
+                asset_path: ./target/${{ matrix.platform.target }}
+                asset_name: ${{ matrix.platform.name }}
+                asset_content_type: application/gzip
+                
