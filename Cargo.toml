@@ -1,0 +1,18 @@
+[package]
+name = "aplookup-rs"
+version = "0.1.0"
+edition = "2021"
+
+authors = ["Esurio"]
+description = "Lookup tool for ActivityPub"
+license = "MIT"
+readme = "README.md"
+
+[dependencies]
+nu-ansi-term = "0.49"
+anyhow = "1.0.89"
+clap = { version = "4.5.17", features = ["derive"] }
+clap_derive = "4.5.13"
+curl = "0.4.46"
+spinners = "4.1.1"
+serde_json = "1.0.128"
