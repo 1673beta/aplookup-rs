@@ -1,9 +1,10 @@
 use core::str;
 
 use anyhow::Result;
-use nu_ansi_term::Color::Green;
 use curl::easy::{Easy, List};
 use serde_json::Value;
+use colored_json::{Color, ColoredFormatter, PrettyFormatter, Styler};
+
 
 pub fn aplookup(url: &str) -> Result<()> {
     let mut list = List::new();
@@ -23,10 +24,15 @@ pub fn aplookup(url: &str) -> Result<()> {
         transfer.perform().unwrap();
     }
 
+    let f = ColoredFormatter::with_styler(PrettyFormatter::new(), Styler {
+        key: Color::Cyan.foreground(),
+        string_value: Color::Green.foreground(),
+        ..Default::default()
+    }, );
+
     let response_body = str::from_utf8(&data).unwrap();
     let json: Value = serde_json::from_str(response_body).unwrap();
-    let pretty_json = serde_json::to_string_pretty(&json).unwrap();
-    let colored_response = Green.paint(pretty_json);
+    let colored_response = f.to_colored_json_auto(&json).unwrap();
     println!("{}", colored_response);
 
     Ok(())
